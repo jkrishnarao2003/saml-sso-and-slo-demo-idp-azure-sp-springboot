@@ -11,9 +11,9 @@ logging:
           security:
             saml: DEBUG
 
-service.provider.entity.id: # put your entity id here e.g com:uday:spring:boot:sp
+service.provider.entity.id: com:threeidiots:spring:sp
 
-idp.metedata.url: # put your IDP metadata URL here
+idp.metedata.url: https://login.microsoftonline.com/6db4134c-be57-4ed6-a50b-666bbd1428f9/federationmetadata/2007-06/federationmetadata.xml?appid=42cfed16-8b5d-43d0-bf8e-a7401e4f2107
 
 # you can update credentials if you want, I recommend you to keep as it is for demo purpose
 saml:

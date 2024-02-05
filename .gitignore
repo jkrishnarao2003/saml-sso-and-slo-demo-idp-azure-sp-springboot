@@ -6,6 +6,8 @@
 # Maven
 log/
 logs/
+
+target/
 target/
 
 # Compiled class file

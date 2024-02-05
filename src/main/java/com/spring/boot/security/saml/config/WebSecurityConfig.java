@@ -122,7 +122,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements I
     // Provider of default SAML Context
     @Bean
     public SAMLContextProviderImpl contextProvider() {
-        return new SAMLContextProviderImpl();
+        SAMLContextProviderImpl samlContextProviderImpl = new SAMLContextProviderImpl();
+        /*
+         * Fixed issue:
+         * Caused by: org.opensaml.common.SAMLException: InResponseToField of the Response doesn't correspond to sent message a336a62i5hi84b0d50ebjiba028d26h
+	at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.processAuthenticationResponse(WebSSOProfileConsumerImpl.java:175) ~[spring-security-saml2-core-1.0.10.RELEASE.jar:1.0.10.RELEASE]
+	at org.springframework.security.saml.SAMLAuthenticationProvider.authenticate(SAMLAuthenticationProvider.java:88) ~[spring-security-saml2-core-1.0.10.RELEASE.jar:1.0.10.RELEASE]
+	... 52 more
+         * 
+         * https://docs.spring.io/spring-security-saml/docs/current/reference/html/chapter-troubleshooting.html#d5e1935
+         * 
+         * */
+        samlContextProviderImpl.setStorageFactory(new org.springframework.security.saml.storage.EmptyStorageFactory());
+		return samlContextProviderImpl;
     }
 
     // Initialization of OpenSAML library
@@ -140,7 +152,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements I
     // SAML 2.0 WebSSO Assertion Consumer
     @Bean
     public WebSSOProfileConsumer webSSOprofileConsumer() {
-        return new WebSSOProfileConsumerImpl();
+    	/*
+    	 * Fixed issue
+    	 * Caused by: org.opensaml.common.SAMLException: Response issue time is either too old or with date in the future, skew 60, time 2024-02-05T04:12:56.842Z
+	at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.processAuthenticationResponse(WebSSOProfileConsumerImpl.java:162) ~[spring-security-saml2-core-1.0.10.RELEASE.jar:1.0.10.RELEASE]
+	at org.springframework.security.saml.SAMLAuthenticationProvider.authenticate(SAMLAuthenticationProvider.java:88) ~[spring-security-saml2-core-1.0.10.RELEASE.jar:1.0.10.RELEASE]
+	... 52 more
+
+Fix 
+https://stackoverflow.com/questions/25647925/spring-security-saml-time-difference-between-sp-and-idp
+    	 * 
+    	 * */
+        WebSSOProfileConsumerImpl webSSOProfileConsumerImpl = new WebSSOProfileConsumerImpl();
+        webSSOProfileConsumerImpl.setResponseSkew(86400);
+		return webSSOProfileConsumerImpl;
     }
 
     // SAML 2.0 Holder-of-Key WebSSO Assertion Consumer
@@ -169,7 +194,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements I
 
     @Bean
     public SingleLogoutProfile logoutprofile() {
-        return new SingleLogoutProfileImpl();
+    	/*
+    	 * Fixed issue
+    	 * Caused by: org.opensaml.common.SAMLException: Response issue time is either too old or with date in the future, skew 60, time 2024-02-05T04:12:56.842Z
+	at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.processAuthenticationResponse(WebSSOProfileConsumerImpl.java:162) ~[spring-security-saml2-core-1.0.10.RELEASE.jar:1.0.10.RELEASE]
+	at org.springframework.security.saml.SAMLAuthenticationProvider.authenticate(SAMLAuthenticationProvider.java:88) ~[spring-security-saml2-core-1.0.10.RELEASE.jar:1.0.10.RELEASE]
+	... 52 more
+
+Fix 
+https://stackoverflow.com/questions/25647925/spring-security-saml-time-difference-between-sp-and-idp
+    	 * 
+    	 * */
+        SingleLogoutProfileImpl singleLogoutProfileImpl = new SingleLogoutProfileImpl();
+        singleLogoutProfileImpl.setResponseSkew(86400);
+		return singleLogoutProfileImpl;
     }
 
     // Central storage of cryptographic keys
